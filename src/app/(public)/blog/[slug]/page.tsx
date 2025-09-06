@@ -1,11 +1,11 @@
-import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import Link from 'next/link'
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import Link from "next/link";
 
 const POSTS = {
-  'introducing-hostro-connect-plus': {
-    title: 'Introducing Hostro Connect+ for Colleges',
-    date: '2025-06-15',
+  "introducing-hostro-connect-plus": {
+    title: "Introducing Hostro Connect+ for Colleges",
+    date: "2025-06-15",
     body: `
 Hostro Connect+ brings verified PG discovery right into college workflows.
 
@@ -17,9 +17,9 @@ Hostro Connect+ brings verified PG discovery right into college workflows.
 We’re piloting in select campuses this semester.
     `,
   },
-  'payments-made-simple': {
-    title: 'Payments made simple: rent, deposits & invoices',
-    date: '2025-05-02',
+  "payments-made-simple": {
+    title: "Payments made simple: rent, deposits & invoices",
+    date: "2025-05-02",
     body: `
 Pay securely with UPI, cards, and netbanking. Download invoices anytime.
 
@@ -28,9 +28,9 @@ Pay securely with UPI, cards, and netbanking. Download invoices anytime.
 - Track deposits and add-on services
     `,
   },
-  'pg-life-checklist': {
-    title: 'Your PG life checklist before move-in',
-    date: '2025-03-20',
+  "pg-life-checklist": {
+    title: "Your PG life checklist before move-in",
+    date: "2025-03-20",
     body: `
 From KYC to laundry—here’s a simple checklist to make your first week smooth.
 
@@ -39,32 +39,36 @@ From KYC to laundry—here’s a simple checklist to make your first week smooth
 - Meal/laundry plan chosen
     `,
   },
-} as const
+} as const;
 
-type Slug = keyof typeof POSTS
+type Slug = keyof typeof POSTS;
+
+export function generateStaticParams() {
+  return Object.keys(POSTS).map((slug) => ({ slug }));
+}
 
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: Slug }
+  params: { slug: string };
 }): Promise<Metadata> {
-  const post = POSTS[params.slug]
-  if (!post) return {}
+  const post = POSTS[params.slug as Slug];
+  if (!post) return {};
   return {
     title: post.title,
-    description: post.body.trim().split('\n').slice(0, 2).join(' '),
-  }
+    description: post.body.trim().split("\n").slice(0, 2).join(" "),
+  };
 }
 
-export default function BlogPostPage({ params }: { params: { slug: Slug } }) {
-  const post = POSTS[params.slug]
-  if (!post) return notFound()
+export default function BlogPostPage({ params }: { params: { slug: string } }) {
+  const post = POSTS[params.slug as Slug];
+  if (!post) return notFound();
 
-  const date = new Date(post.date).toLocaleDateString('en-IN', {
-    year: 'numeric',
-    month: 'long',
-    day: '2-digit',
-  })
+  const date = new Date(post.date).toLocaleDateString("en-IN", {
+    year: "numeric",
+    month: "long",
+    day: "2-digit",
+  });
 
   return (
     <main className="bg-white text-gray-800">
@@ -75,11 +79,11 @@ export default function BlogPostPage({ params }: { params: { slug: Slug } }) {
         <h1 className="mt-3 text-3xl md:text-4xl font-bold">{post.title}</h1>
         <div className="mt-2 text-sm text-gray-500">{date}</div>
         <article className="prose prose-emerald max-w-none mt-6">
-          {post.body.split('\n').map((line, i) => (
+          {post.body.split("\n").map((line, i) => (
             <p key={i}>{line || <br />}</p>
           ))}
         </article>
       </section>
     </main>
-  )
+  );
 }
